@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   number={1},
   pages={12--29},
   year={2026},
-  publisher={Department of Taxation, Federal University Dutse},
+  publisher={Department of Management Sciences, Federal University Dutse},
   doi={10.5281/ajftfp.2026.0101}
 }`
     };
@@ -126,10 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
     submissionForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const consentCheck = document.getElementById('agreeEthics');
-      if (consentCheck && !consentCheck.checked) {
-        alert('Please review and agree to the Journal Publication Ethics, Turnitin <15% Plagiarism Limit, and Author Guidelines declaration.');
-        consentCheck.focus();
+      const checkOrig = document.getElementById('checkOrig') || document.getElementById('agreeEthics');
+      if (checkOrig && !checkOrig.checked) {
+        alert('Please review and confirm the originality declaration and Turnitin < 15% limit.');
+        checkOrig.focus();
         return;
       }
 
@@ -142,9 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const submitBtn = submissionForm.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting Manuscript...';
+      const originalText = submitBtn ? submitBtn.innerHTML : 'Submit Manuscript';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting Manuscript...';
+      }
 
       setTimeout(() => {
         const modalEl = document.getElementById('submissionSuccessModal');
@@ -154,31 +156,37 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           alert('Manuscript Submitted Successfully! Your tracking reference will be sent to your email.');
         }
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
         submissionForm.reset();
-      }, 1500);
+      }, 1200);
     });
   }
 
   // -------------------------------------------------------------
   // 4. Contact Form Handler
   // -------------------------------------------------------------
-  const contactForm = document.getElementById('journalContactForm');
+  const contactForm = document.getElementById('contactInquiryForm') || document.getElementById('journalContactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const submitBtn = contactForm.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+      const originalText = submitBtn ? submitBtn.innerHTML : 'Send Inquiry';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+      }
 
       setTimeout(() => {
-        alert('Thank you for contacting AJFTFP Editorial Office. We will get back to you within 24–48 business hours.');
+        alert('Thank you for contacting the AJFTFP Editorial Office. We will get back to you within 24–48 business hours.');
         contactForm.reset();
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }, 1200);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 1000);
     });
   }
 });
