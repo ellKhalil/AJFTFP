@@ -214,7 +214,20 @@
 
             <!-- Step 3: Files -->
             <div class="border-bottom pb-3 mb-3">
-              <h5 class="font-serif text-navy mb-2"><i class="bi bi-cloud-arrow-up text-primary me-2"></i>3. Upload Files</h5>
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                <h5 class="font-serif text-navy mb-0"><i class="bi bi-cloud-arrow-up text-primary me-2"></i>3. Upload Files</h5>
+                <div class="btn-group btn-group-sm">
+                  <a href="assets/docs/AJFTFP_Manuscript_Template.docx" download="AJFTFP_Manuscript_Template.docx" class="btn btn-outline-primary py-1" title="Download Word Template">
+                    <i class="bi bi-file-earmark-word me-1"></i> Word Template
+                  </a>
+                  <a href="assets/docs/AJFTFP_Manuscript_Template.pdf" download="AJFTFP_Manuscript_Template.pdf" class="btn btn-outline-secondary py-1" title="Download PDF Template">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> PDF Template
+                  </a>
+                </div>
+              </div>
+              <div class="alert alert-light border py-2 px-3 mb-2 small text-muted">
+                <i class="bi bi-info-circle text-primary me-1"></i> Please ensure your manuscript follows the <a href="assets/docs/AJFTFP_Manuscript_Template.docx" download="AJFTFP_Manuscript_Template.docx" class="fw-bold text-navy">Official AJFTFP Manuscript Template</a> before uploading.
+              </div>
               <div class="row g-2">
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Blinded Manuscript (.doc/.docx) *</label>
@@ -253,6 +266,23 @@
         <!-- Right 4 Columns: Sidebar -->
         <div class="col-lg-4">
           
+          <div class="sidebar-box mb-3 border-warning" style="border-left: 3px solid var(--aj-gold-accent) !important;">
+            <div class="sidebar-box-title">
+              <span><i class="bi bi-file-earmark-arrow-down text-primary me-2"></i>Manuscript Template</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Use the official template to ensure compliance with AJFTFP typography and section layout:
+            </p>
+            <div class="d-grid gap-1">
+              <a href="assets/docs/AJFTFP_Manuscript_Template.docx" download="AJFTFP_Manuscript_Template.docx" class="btn btn-navy btn-sm fw-bold">
+                <i class="bi bi-file-earmark-word text-primary me-1"></i> Download Word (.DOCX)
+              </a>
+              <a href="assets/docs/AJFTFP_Manuscript_Template.pdf" download="AJFTFP_Manuscript_Template.pdf" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-file-earmark-pdf text-danger me-1"></i> Download PDF (.PDF)
+              </a>
+            </div>
+          </div>
+
           <div class="call-for-papers-widget mb-3">
             <h5 class="text-white"><i class="bi bi-envelope-at me-2"></i>Email Submission Fallback</h5>
             <p class="small text-light opacity-75 mb-2">
