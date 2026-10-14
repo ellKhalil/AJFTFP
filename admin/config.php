@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // 1. Core Settings & Default Admin Credentials
 // -----------------------------------------------------------------------------
 define('ADMIN_USERNAME', 'admin');
-// Default password: admin@ajftfp2026 (Editor can change credentials anytime)
+// Secure bcrypt hashed editorial password
 define('ADMIN_PASSWORD_HASH', '$2y$12$e5rGJV8pf5D7yoOp09pC7eiYfgHmNCBX.rpaUsskeDXJ98nFETM8.'); 
 
 define('AJFTFP_DATA_DIR', __DIR__ . '/data');

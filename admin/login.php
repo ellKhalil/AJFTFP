@@ -111,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="input-group-text"><i class="bi bi-lock"></i></span>
             <input type="password" name="password" class="form-control" placeholder="••••••••" required>
           </div>
-          <div class="form-text small mt-1 text-muted">Default password: <code>admin@ajftfp2026</code></div>
         </div>
 
         <button type="submit" class="btn btn-login w-100 py-2 mb-3">
