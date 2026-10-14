@@ -266,6 +266,23 @@
         <!-- Right 4 Columns: Sidebar -->
         <div class="col-lg-4">
           
+          <!-- Track Submission Status Widget -->
+          <div class="sidebar-box mb-3 border-primary" style="border-left: 3px solid var(--aj-navy-primary) !important;">
+            <div class="sidebar-box-title">
+              <span><i class="bi bi-search text-primary me-2"></i>Track Your Manuscript</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Enter the tracking reference code you received upon submission to check review progress:
+            </p>
+            <form id="trackManuscriptForm" class="mb-2">
+              <div class="input-group input-group-sm mb-2">
+                <input type="text" id="trackRefInput" class="form-control" placeholder="e.g. AJFTFP-2026-MS-139" required>
+                <button type="submit" class="btn btn-navy fw-bold"><i class="bi bi-search"></i> Check</button>
+              </div>
+            </form>
+            <div id="trackResultBox" style="display: none;" class="p-3 bg-light border rounded small"></div>
+          </div>
+
           <div class="sidebar-box mb-3 border-warning" style="border-left: 3px solid var(--aj-gold-accent) !important;">
             <div class="sidebar-box-title">
               <span><i class="bi bi-file-earmark-arrow-down text-primary me-2"></i>Manuscript Template</span>

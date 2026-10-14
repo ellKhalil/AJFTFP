@@ -26,6 +26,34 @@ try {
         exit;
     }
 
+    // 1b. Track Manuscript by Reference
+    if ($action === 'track') {
+        $ref = trim($_GET['ref'] ?? '');
+        if (empty($ref)) {
+            echo json_encode(['success' => false, 'message' => 'Please provide a valid tracking reference.']);
+            exit;
+        }
+        $stmt = $db->prepare("SELECT tracking_ref, manuscript_title, author_name, author_surname, status, created_at, reviewer_notes FROM submissions WHERE tracking_ref = :ref LIMIT 1");
+        $stmt->execute([':ref' => $ref]);
+        $submission = $stmt->fetch();
+        if ($submission) {
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'tracking_ref'     => $submission['tracking_ref'],
+                    'manuscript_title' => $submission['manuscript_title'],
+                    'author'           => $submission['author_name'] . ' ' . $submission['author_surname'],
+                    'status'           => $submission['status'],
+                    'date'             => date('F d, Y', strtotime($submission['created_at'])),
+                    'editorial_notes'  => !empty($submission['reviewer_notes']) ? $submission['reviewer_notes'] : null
+                ]
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Tracking reference not found. Please verify the code on your submission receipt.']);
+        }
+        exit;
+    }
+
     // 2. Filtered by Volume & Issue (for Current Issue)
     if ($volume > 0 && $issue > 0) {
         $stmt = $db->prepare("SELECT * FROM published_articles WHERE volume = :v AND issue = :i ORDER BY id DESC");

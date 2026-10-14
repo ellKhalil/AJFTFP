@@ -244,33 +244,33 @@ $count_published = count($published_articles);
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4">
       <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card" style="cursor: pointer;" onclick="filterSubmissionsTab('all')" title="Click to view all submissions">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="stat-number"><?php echo $count_submissions; ?></div>
-              <div class="small text-muted fw-bold">Total Submissions</div>
+              <div class="small text-muted fw-bold">Total Submissions <i class="bi bi-arrow-right-short"></i></div>
             </div>
             <div class="p-3 bg-light rounded text-primary fs-3"><i class="bi bi-file-earmark-arrow-up"></i></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card" style="cursor: pointer;" onclick="filterSubmissionsTab('Under Review')" title="Click to filter Under Review submissions">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="stat-number text-warning"><?php echo $count_under_review; ?></div>
-              <div class="small text-muted fw-bold">Under Review</div>
+              <div class="small text-muted fw-bold">Under Review <i class="bi bi-arrow-right-short"></i></div>
             </div>
             <div class="p-3 bg-light rounded text-warning fs-3"><i class="bi bi-clock-history"></i></div>
           </div>
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card" style="cursor: pointer;" onclick="filterSubmissionsTab('Accepted')" title="Click to filter Accepted manuscripts">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="stat-number text-success"><?php echo $count_accepted; ?></div>
-              <div class="small text-muted fw-bold">Accepted Papers</div>
+              <div class="small text-muted fw-bold">Accepted Papers <i class="bi bi-arrow-right-short"></i></div>
             </div>
             <div class="p-3 bg-light rounded text-success fs-3"><i class="bi bi-check2-circle"></i></div>
           </div>
@@ -315,8 +315,22 @@ $count_published = count($published_articles);
       <div class="tab-pane fade show active" id="submissions-pane">
         <div class="card-panel">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <h5 class="fw-bold mb-0 text-navy"><i class="bi bi-files text-primary me-2"></i>Submitted Manuscripts</h5>
-            <small class="text-muted">Real-time author submissions from the online portal</small>
+            <div>
+              <h5 class="fw-bold mb-0 text-navy"><i class="bi bi-files text-primary me-2"></i>Submitted Manuscripts</h5>
+              <small class="text-muted">Real-time author submissions from the online portal</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="small text-muted fw-bold">Filter:</label>
+              <select id="submissionStatusFilter" class="form-select form-select-sm" style="width: auto;" onchange="filterSubmissionsTab(this.value)">
+                <option value="all">All Submissions</option>
+                <option value="Submitted">Submitted (New)</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Revision Required">Revision Required</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Published">Published</option>
+              </select>
+            </div>
           </div>
 
           <?php if (empty($submissions)): ?>
@@ -327,7 +341,7 @@ $count_published = count($published_articles);
             </div>
           <?php else: ?>
             <div class="table-responsive">
-              <table class="table table-hover align-middle small">
+              <table class="table table-hover align-middle small" id="submissionsTable">
                 <thead class="table-light">
                   <tr>
                     <th>Ref #</th>
@@ -344,7 +358,7 @@ $count_published = count($published_articles);
                   <?php foreach ($submissions as $sub): 
                     $safeStatus = preg_replace('/[^A-Za-z0-9\-]/', '-', $sub['status']);
                   ?>
-                    <tr>
+                    <tr class="submission-row" data-status="<?php echo htmlspecialchars($sub['status']); ?>">
                       <td class="fw-bold text-navy"><?php echo htmlspecialchars($sub['tracking_ref']); ?></td>
                       <td>
                         <strong><?php echo htmlspecialchars($sub['author_title'] . ' ' . $sub['author_name'] . ' ' . $sub['author_surname']); ?></strong><br>
@@ -619,5 +633,31 @@ $count_published = count($published_articles);
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function filterSubmissionsTab(status) {
+      // 1. Activate submissions tab
+      const subTabBtn = document.getElementById('submissions-tab');
+      if (subTabBtn) {
+        bootstrap.Tab.getOrCreateInstance(subTabBtn).show();
+      }
+
+      // 2. Set dropdown value
+      const select = document.getElementById('submissionStatusFilter');
+      if (select && select.value !== status) {
+        select.value = status;
+      }
+
+      // 3. Filter rows
+      const rows = document.querySelectorAll('.submission-row');
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        if (status === 'all' || rowStatus === status) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 </html>

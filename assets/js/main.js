@@ -205,6 +205,59 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
+  // 4b. Manuscript Tracking Handler
+  // -------------------------------------------------------------
+  const trackForm = document.getElementById('trackManuscriptForm');
+  const trackRefInput = document.getElementById('trackRefInput');
+  const trackResultBox = document.getElementById('trackResultBox');
+
+  if (trackForm && trackRefInput && trackResultBox) {
+    trackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ref = trackRefInput.value.trim();
+      if (!ref) return;
+
+      const submitBtn = trackForm.querySelector('button[type="submit"]');
+      const origText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+      fetch(`api_articles.php?action=track&ref=${encodeURIComponent(ref)}`)
+        .then(res => res.json())
+        .then(data => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText;
+          trackResultBox.style.display = 'block';
+
+          if (data.success && data.data) {
+            const d = data.data;
+            const statusClass = d.status === 'Accepted' ? 'text-success' : (d.status === 'Under Review' ? 'text-warning' : 'text-primary');
+            trackResultBox.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="badge bg-navy text-white">${d.tracking_ref}</span>
+                <span class="fw-bold ${statusClass}"><i class="bi bi-clock-history me-1"></i>${d.status}</span>
+              </div>
+              <div class="fw-bold text-dark mb-1" style="line-height: 1.3;">${d.manuscript_title}</div>
+              <div class="text-muted small mb-1">Author: ${d.author} &bull; Submitted: ${d.date}</div>
+              ${d.editorial_notes ? `<div class="p-2 mt-2 bg-white border rounded"><strong>Editor Note:</strong> <span class="text-muted">${d.editorial_notes}</span></div>` : ''}
+            `;
+          } else {
+            trackResultBox.innerHTML = `
+              <div class="text-danger fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Reference Not Found</div>
+              <p class="text-muted mb-0 small">${data.message || 'Please check your tracking code and try again.'}</p>
+            `;
+          }
+        })
+        .catch(err => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText;
+          trackResultBox.style.display = 'block';
+          trackResultBox.innerHTML = `<div class="text-danger small">Network error checking status. Please try again.</div>`;
+        });
+    });
+  }
+
+  // -------------------------------------------------------------
   // 5. Dynamic Published Articles Loader (Current Issue, Archives, Home, Detail)
   // -------------------------------------------------------------
   const homeContainer = document.getElementById('dynamicPublishedHomeContainer');
