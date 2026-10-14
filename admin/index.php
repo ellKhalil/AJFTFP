@@ -277,11 +277,11 @@ $count_published = count($published_articles);
         </div>
       </div>
       <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card" style="cursor: pointer;" onclick="document.getElementById('published-tab').click();" title="Click to view published articles list">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <div class="stat-number text-info"><?php echo $count_published; ?></div>
-              <div class="small text-muted fw-bold">Published in Issues</div>
+              <div class="small text-muted fw-bold">Published in Issues <i class="bi bi-arrow-right-short"></i></div>
             </div>
             <div class="p-3 bg-light rounded text-info fs-3"><i class="bi bi-journal-bookmark-fill"></i></div>
           </div>
@@ -509,10 +509,13 @@ $count_published = count($published_articles);
                       </td>
                       <td class="text-nowrap"><?php echo htmlspecialchars($art['published_date']); ?></td>
                       <td class="text-end text-nowrap">
+                        <a href="../article-detail.html?id=<?php echo $art['id']; ?>" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-2 me-1" title="View Article on Public Site">
+                          <i class="bi bi-eye"></i> View
+                        </a>
                         <form method="POST" style="display:inline;" onsubmit="return confirm('Remove this published article from repository?');">
                           <input type="hidden" name="action" value="delete_published_article">
                           <input type="hidden" name="article_id" value="<?php echo $art['id']; ?>">
-                          <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2">
+                          <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete Article">
                             <i class="bi bi-trash"></i> Delete
                           </button>
                         </form>
