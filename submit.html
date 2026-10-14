@@ -140,7 +140,7 @@
               <div class="row g-2">
                 <div class="col-md-3">
                   <label class="form-label small fw-bold mb-0">Title</label>
-                  <select class="form-select form-select-sm" required>
+                  <select name="author_title" class="form-select form-select-sm" required>
                     <option value="">Select...</option>
                     <option value="Prof">Prof.</option>
                     <option value="Dr">Dr.</option>
@@ -151,27 +151,27 @@
                 </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-bold mb-0">First &amp; Middle Names</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="First names">
+                  <input type="text" name="author_name" class="form-control form-control-sm" required placeholder="First names">
                 </div>
                 <div class="col-md-5">
                   <label class="form-label small fw-bold mb-0">Surname</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="Last name">
+                  <input type="text" name="author_surname" class="form-control form-control-sm" required placeholder="Last name">
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Email (Institutional)</label>
-                  <input type="email" class="form-control form-control-sm" required placeholder="author@university.edu.ng">
+                  <input type="email" name="author_email" class="form-control form-control-sm" required placeholder="author@university.edu.ng">
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Mobile / WhatsApp</label>
-                  <input type="tel" class="form-control form-control-sm" required placeholder="+234...">
+                  <input type="tel" name="author_phone" class="form-control form-control-sm" required placeholder="+234...">
                 </div>
                 <div class="col-md-8">
                   <label class="form-label small fw-bold mb-0">Affiliation &amp; Department</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="e.g. Dept of Management Sciences, FUD">
+                  <input type="text" name="affiliation" class="form-control form-control-sm" required placeholder="e.g. Dept of Management Sciences, FUD">
                 </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-bold mb-0">Country</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="e.g. Nigeria">
+                  <input type="text" name="country" class="form-control form-control-sm" value="Nigeria" required placeholder="e.g. Nigeria">
                 </div>
               </div>
             </div>
@@ -182,15 +182,15 @@
               <div class="row g-2">
                 <div class="col-12">
                   <label class="form-label small fw-bold mb-0">Manuscript Title</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="Full title">
+                  <input type="text" name="manuscript_title" class="form-control form-control-sm" required placeholder="Full title">
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Short Running Title (&lt; 40 chars)</label>
-                  <input type="text" maxlength="40" class="form-control form-control-sm" required placeholder="Running head">
+                  <input type="text" name="running_title" maxlength="40" class="form-control form-control-sm" required placeholder="Running head">
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Paper Category</label>
-                  <select class="form-select form-select-sm" required>
+                  <select name="category" class="form-select form-select-sm" required>
                     <option value="Research Paper">Original Research Article</option>
                     <option value="Review Paper">Review Article</option>
                     <option value="Policy Analysis">Policy Analysis Paper</option>
@@ -199,15 +199,15 @@
                 </div>
                 <div class="col-12">
                   <label class="form-label small fw-bold mb-0">Structured Abstract (150–250 Words)</label>
-                  <textarea class="form-control form-control-sm" rows="4" required placeholder="State: Problem, Method, Findings, and Contribution..."></textarea>
+                  <textarea name="abstract" class="form-control form-control-sm" rows="4" required placeholder="State: Problem, Method, Findings, and Contribution..."></textarea>
                 </div>
                 <div class="col-md-8">
                   <label class="form-label small fw-bold mb-0">Keywords (3–6 keywords)</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="e.g. Digital Tax, Fiscal Federalism, Revenue">
+                  <input type="text" name="keywords" class="form-control form-control-sm" required placeholder="e.g. Digital Tax, Fiscal Federalism, Revenue">
                 </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-bold mb-0">JEL Codes</label>
-                  <input type="text" class="form-control form-control-sm" required placeholder="e.g. H20, H25">
+                  <input type="text" name="jel_codes" class="form-control form-control-sm" placeholder="e.g. H20, H25">
                 </div>
               </div>
             </div>
@@ -231,15 +231,15 @@
               <div class="row g-2">
                 <div class="col-md-6">
                   <label class="form-label small fw-bold mb-0">Blinded Manuscript (.doc/.docx) *</label>
-                  <input type="file" id="manuscriptFile" class="form-control form-control-sm" accept=".doc,.docx" required>
+                  <input type="file" name="file_manuscript" id="manuscriptFile" class="form-control form-control-sm" accept=".doc,.docx,.pdf" required>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label small fw-bold mb-0">Title Page Cover Sheet (.doc/.docx) *</label>
-                  <input type="file" class="form-control form-control-sm" accept=".doc,.docx" required>
+                  <label class="form-label small fw-bold mb-0">Title Page Cover Sheet (.doc/.docx)</label>
+                  <input type="file" name="file_cover_sheet" class="form-control form-control-sm" accept=".doc,.docx,.pdf">
                 </div>
                 <div class="col-md-12">
-                  <label class="form-label small fw-bold mb-0">Signed Declaration of Originality *</label>
-                  <input type="file" class="form-control form-control-sm" accept=".pdf,.doc,.docx" required>
+                  <label class="form-label small fw-bold mb-0">Signed Declaration of Originality</label>
+                  <input type="file" name="file_declaration" class="form-control form-control-sm" accept=".pdf,.doc,.docx">
                 </div>
               </div>
             </div>

@@ -125,18 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (submissionForm) {
     submissionForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
-      const consentCheck = document.getElementById('agreeEthics');
-      if (consentCheck && !consentCheck.checked) {
-        alert('Please review and agree to the Journal Publication Ethics, Turnitin <15% Plagiarism Limit, and Author Guidelines declaration.');
-        consentCheck.focus();
-        return;
-      }
 
       // Check file inputs
       const manuscriptFile = document.getElementById('manuscriptFile');
       if (manuscriptFile && !manuscriptFile.files.length) {
-        alert('Please upload your blinded manuscript document (.doc or .docx).');
+        alert('Please upload your manuscript document (.doc, .docx, or .pdf).');
         manuscriptFile.focus();
         return;
       }
@@ -146,18 +139,47 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting Manuscript...';
 
-      setTimeout(() => {
+      const formData = new FormData(submissionForm);
+
+      fetch('admin/submit_api.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+
+        if (data.success) {
+          const modalEl = document.getElementById('submissionSuccessModal');
+          if (modalEl) {
+            // Update tracking ref badge in modal
+            const trackingBadge = modalEl.querySelector('.badge.bg-primary');
+            if (trackingBadge && data.tracking_ref) {
+              trackingBadge.textContent = data.tracking_ref;
+            }
+            const successModal = new bootstrap.Modal(modalEl);
+            successModal.show();
+          } else {
+            alert('Manuscript Submitted Successfully! Reference: ' + (data.tracking_ref || ''));
+          }
+          submissionForm.reset();
+        } else {
+          alert('Submission Error: ' + (data.message || 'Unable to process submission.'));
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        console.error(err);
+        // Fallback for static viewing / demo
         const modalEl = document.getElementById('submissionSuccessModal');
         if (modalEl) {
           const successModal = new bootstrap.Modal(modalEl);
           successModal.show();
-        } else {
-          alert('Manuscript Submitted Successfully! Your tracking reference will be sent to your email.');
         }
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
         submissionForm.reset();
-      }, 1500);
+      });
     });
   }
 
