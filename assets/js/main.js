@@ -203,4 +203,203 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1200);
     });
   }
+
+  // -------------------------------------------------------------
+  // 5. Dynamic Published Articles Loader (Current Issue, Archives, Home, Detail)
+  // -------------------------------------------------------------
+  const homeContainer = document.getElementById('dynamicPublishedHomeContainer');
+  const currentIssueContainer = document.getElementById('publishedArticlesContainer');
+  const archivesContainer = document.getElementById('publishedArchivesContainer');
+  const articleDetailCol = document.getElementById('articleDetailMainCol');
+
+  // Helper to build a clean scholarly article card
+  const createArticleCardHTML = (art) => {
+    const docxBtn = art.file_docx 
+      ? `<a href="${art.file_docx}" download class="btn btn-sm btn-outline-primary py-1 px-2" title="Download Word"><i class="bi bi-file-earmark-word me-1"></i>DOCX</a>` 
+      : '';
+    const pdfBtn = art.file_pdf 
+      ? `<a href="${art.file_pdf}" download class="btn btn-sm btn-outline-danger py-1 px-2" title="Download PDF"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>` 
+      : '';
+
+    return `
+      <div class="academic-card p-4 mb-3 filterable-article" 
+           data-title="${art.title ? art.title.replace(/"/g, '&quot;') : ''}" 
+           data-authors="${art.authors ? art.authors.replace(/"/g, '&quot;') : ''}" 
+           data-category="${art.category ? art.category.toLowerCase().replace(/"/g, '&quot;') : ''}" 
+           data-year="${art.year || ''}">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <span class="badge bg-light text-navy border fw-bold">Vol. ${art.volume} No. ${art.issue} (${art.year})</span>
+          <span class="badge-oa"><i class="bi bi-unlock-fill"></i> Gold Open Access (CC BY 4.0)</span>
+        </div>
+        <h5 class="font-serif mb-2">
+          <a href="article-detail.html?id=${art.id}" class="text-navy text-decoration-none hover-gold">
+            ${art.title}
+          </a>
+        </h5>
+        <div class="small text-muted mb-2">
+          <i class="bi bi-person me-1"></i> <strong>${art.authors}</strong> 
+          ${art.affiliations ? `&bull; <em>${art.affiliations}</em>` : ''}
+        </div>
+        <div class="small text-muted mb-2">
+          <i class="bi bi-link-45deg me-1"></i> <strong>DOI:</strong> <span class="text-dark font-monospace">${art.doi}</span>
+        </div>
+        <p class="small text-muted mb-3" style="text-align: justify; line-height: 1.6;">
+          ${art.abstract.length > 250 ? art.abstract.substring(0, 250) + '...' : art.abstract}
+        </p>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2 border-top">
+          <span class="badge bg-light text-dark border">${art.category || 'Research Article'}</span>
+          <div class="d-flex gap-2">
+            <a href="article-detail.html?id=${art.id}" class="btn btn-sm btn-gold fw-bold py-1 px-2">
+              <i class="bi bi-book-half me-1"></i> Read Article
+            </a>
+            ${pdfBtn}
+            ${docxBtn}
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  // If on Single Article Detail page and an ?id= parameter is present
+  if (articleDetailCol) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleId = urlParams.get('id');
+
+    if (articleId) {
+      fetch(`api_articles.php?action=detail&id=${articleId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.article) {
+            const art = data.article;
+            document.title = `${art.title} | AJFTFP`;
+
+            const docxDownload = art.file_docx 
+              ? `<a href="${art.file_docx}" download class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-word me-1"></i> Download Word (.docx)</a>` 
+              : '';
+            const pdfDownload = art.file_pdf 
+              ? `<a href="${art.file_pdf}" download class="btn btn-danger btn-sm fw-bold"><i class="bi bi-file-earmark-pdf me-1"></i> Download PDF</a>` 
+              : '';
+
+            articleDetailCol.innerHTML = `
+              <article class="academic-card p-4 mb-3" style="border-left: 4px solid var(--aj-gold-accent) !important;">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                  <span class="badge bg-navy text-white fw-bold">Vol. ${art.volume} No. ${art.issue} (${art.year})</span>
+                  <span class="badge-oa"><i class="bi bi-unlock-fill"></i> Gold Open Access (CC BY 4.0)</span>
+                </div>
+
+                <h2 class="font-serif text-navy mb-2">${art.title}</h2>
+
+                <div class="text-muted small mb-2">
+                  <i class="bi bi-person me-1"></i> <strong>Authors:</strong> ${art.authors}
+                </div>
+                <div class="text-muted small mb-2">
+                  <i class="bi bi-building me-1"></i> <strong>Affiliation:</strong> ${art.affiliations || 'Department of Management Sciences, Federal University Dutse'}
+                </div>
+                <div class="text-muted small mb-3">
+                  <i class="bi bi-link-45deg me-1"></i> <strong>DOI:</strong> <a href="https://doi.org/${art.doi}" target="_blank" class="font-monospace text-primary">${art.doi}</a>
+                  &bull; <strong>Published:</strong> ${art.published_date || ''}
+                </div>
+
+                <div class="p-3 bg-light border rounded mb-3">
+                  <h6 class="fw-bold text-navy mb-2"><i class="bi bi-file-earmark-text text-primary me-1"></i> Abstract</h6>
+                  <p class="small text-muted mb-0" style="text-align: justify; line-height: 1.8;">
+                    ${art.abstract.replace(/\n/g, '<br>')}
+                  </p>
+                </div>
+
+                ${art.keywords ? `
+                  <div class="mb-3 small">
+                    <strong>Keywords:</strong> <span class="text-muted">${art.keywords}</span>
+                  </div>
+                ` : ''}
+
+                <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                  ${pdfDownload}
+                  ${docxDownload}
+                  <a href="current-issue.html" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Return to Issue
+                  </a>
+                </div>
+              </article>
+            `;
+          }
+        })
+        .catch(err => console.error('Error fetching article details:', err));
+    }
+  }
+
+  // Load articles for Current Issue, Archives, and Homepage
+  if (homeContainer || currentIssueContainer || archivesContainer) {
+    fetch('api_articles.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.articles && data.articles.length > 0) {
+          const articles = data.articles;
+
+          // 1. Current Issue Page
+          if (currentIssueContainer) {
+            let html = `
+              <div class="academic-card p-4 mb-3">
+                <div class="section-title-wrap mb-3">
+                  <div class="sub-heading">Table of Contents</div>
+                  <h4 class="mb-0 font-serif">Articles Published in this Issue</h4>
+                  <div class="section-title-divider"></div>
+                </div>
+                <div>
+                  ${articles.map(createArticleCardHTML).join('')}
+                </div>
+              </div>
+            `;
+            currentIssueContainer.innerHTML = html;
+          }
+
+          // 2. Archives Page
+          if (archivesContainer) {
+            let html = `
+              <div class="academic-card p-4 mb-3">
+                <div class="section-title-wrap mb-3">
+                  <div class="sub-heading">Journal Catalog</div>
+                  <h4 class="mb-0 font-serif">Published Volumes &amp; Articles (${articles.length})</h4>
+                  <div class="section-title-divider"></div>
+                </div>
+                <div>
+                  ${articles.map(createArticleCardHTML).join('')}
+                </div>
+              </div>
+            `;
+            archivesContainer.innerHTML = html;
+
+            const resultsCountEl = document.getElementById('resultsCount');
+            if (resultsCountEl) {
+              resultsCountEl.textContent = `${articles.length} article${articles.length === 1 ? '' : 's'} cataloged`;
+            }
+          }
+
+          // 3. Homepage (Latest Published Articles)
+          if (homeContainer) {
+            let html = `
+              <section class="academic-card p-4 mb-3">
+                <div class="section-title-wrap mb-3">
+                  <div class="sub-heading">Latest Publications</div>
+                  <h3 class="mb-0 font-serif">Recent Scholarly Articles</h3>
+                  <div class="section-title-divider"></div>
+                </div>
+                <div>
+                  ${articles.slice(0, 5).map(createArticleCardHTML).join('')}
+                </div>
+                <div class="text-center pt-2">
+                  <a href="current-issue.html" class="btn btn-outline-navy btn-sm fw-bold">
+                    View Complete Current Issue <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                </div>
+              </section>
+            `;
+            homeContainer.innerHTML = html;
+          }
+        }
+      })
+      .catch(err => {
+        console.warn('api_articles.php not reachable or no database found; keeping static fallback.', err);
+      });
+  }
 });
