@@ -145,11 +145,17 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(async response => {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
 
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Server returned HTTP ${response.status}: ${errorText.substring(0, 150)}`);
+        }
+        return response.json();
+      })
+      .then(data => {
         if (data.success) {
           const modalEl = document.getElementById('submissionSuccessModal');
           if (modalEl) {
@@ -165,20 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           submissionForm.reset();
         } else {
-          alert('Submission Error: ' + (data.message || 'Unable to process submission.'));
+          alert('Submission Failed: ' + (data.message || 'Unable to process manuscript submission.'));
         }
       })
       .catch(err => {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
-        console.error(err);
-        // Fallback for static viewing / demo
-        const modalEl = document.getElementById('submissionSuccessModal');
-        if (modalEl) {
-          const successModal = new bootstrap.Modal(modalEl);
-          successModal.show();
-        }
-        submissionForm.reset();
+        console.error('Submission error:', err);
+        alert('Submission failed: ' + (err.message || 'Network error connecting to backend.'));
       });
     });
   }
