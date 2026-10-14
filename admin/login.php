@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($username === ADMIN_USERNAME && password_verify($password, ADMIN_PASSWORD_HASH)) {
+    if (verifyAdminCredentials($username, $password)) {
         $_SESSION['ajftfp_admin_logged_in'] = true;
         $_SESSION['ajftfp_admin_user'] = $username;
         header('Location: index.php');

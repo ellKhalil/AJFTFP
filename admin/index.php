@@ -116,6 +116,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "Published article deleted.";
         }
     }
+
+    // 5. Change Admin Password
+    if ($action === 'change_password') {
+        $current_pwd = $_POST['current_password'] ?? '';
+        $new_pwd     = $_POST['new_password'] ?? '';
+        $confirm_pwd = $_POST['confirm_password'] ?? '';
+
+        if (!verifyAdminCredentials('admin', $current_pwd)) {
+            $message = "Error: Current password entered is incorrect.";
+            $message_type = 'danger';
+        } elseif (strlen($new_pwd) < 6) {
+            $message = "Error: New password must be at least 6 characters long.";
+            $message_type = 'danger';
+        } elseif ($new_pwd !== $confirm_pwd) {
+            $message = "Error: New passwords do not match.";
+            $message_type = 'danger';
+        } else {
+            updateAdminPassword($new_pwd);
+            $message = "Admin password updated successfully! Please keep your new credentials safe.";
+            $message_type = 'success';
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -222,7 +244,10 @@ $count_published = count($published_articles);
         <small class="text-white-50">Department of Management Sciences &bull; Federal University Dutse</small>
       </div>
     </div>
-    <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+    <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+      <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+        <i class="bi bi-key-fill me-1"></i> Change Password
+      </button>
       <a href="../index.html" target="_blank" class="btn btn-sm btn-outline-light">
         <i class="bi bi-box-arrow-up-right me-1"></i> Public Website
       </a>
@@ -235,8 +260,8 @@ $count_published = count($published_articles);
   <div class="container-fluid px-lg-4 px-xl-5 py-4">
 
     <?php if (!empty($message)): ?>
-      <div class="alert alert-success alert-dismissible fade show py-2 small d-flex align-items-center mb-3">
-        <i class="bi bi-check-circle-fill me-2 fs-5"></i> <?php echo htmlspecialchars($message); ?>
+      <div class="alert alert-<?php echo ($message_type === 'danger' ? 'danger' : 'success'); ?> alert-dismissible fade show py-2 small d-flex align-items-center mb-3">
+        <i class="bi bi-<?php echo ($message_type === 'danger' ? 'exclamation-triangle-fill' : 'check-circle-fill'); ?> me-2 fs-5"></i> <?php echo htmlspecialchars($message); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php endif; ?>
@@ -630,6 +655,39 @@ $count_published = count($published_articles);
 
     </div>
 
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST">
+          <input type="hidden" name="action" value="change_password">
+          <div class="modal-header bg-navy text-white" style="background: var(--aj-navy-primary);">
+            <h6 class="modal-title text-white"><i class="bi bi-shield-lock-fill text-warning me-2"></i>Change Admin Password</h6>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body small p-4">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Current Password *</label>
+              <input type="password" name="current_password" class="form-control form-control-sm" required placeholder="Enter existing password">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">New Password *</label>
+              <input type="password" name="new_password" class="form-control form-control-sm" minlength="6" required placeholder="At least 6 characters">
+            </div>
+            <div class="mb-2">
+              <label class="form-label fw-bold">Confirm New Password *</label>
+              <input type="password" name="confirm_password" class="form-control form-control-sm" minlength="6" required placeholder="Retype new password">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary fw-bold">Save New Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

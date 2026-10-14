@@ -86,6 +86,20 @@ function getDB() {
             published_date TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )");
+        // Admin credentials table (for editable password)
+        $pdo->exec("CREATE TABLE IF NOT EXISTS admin_users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            password_hash TEXT,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )");
+
+        // Insert default admin if not existing
+        $check = $pdo->query("SELECT COUNT(*) FROM admin_users WHERE username = 'admin'")->fetchColumn();
+        if ($check == 0) {
+            $stmt = $pdo->prepare("INSERT INTO admin_users (username, password_hash) VALUES ('admin', :hash)");
+            $stmt->execute([':hash' => ADMIN_PASSWORD_HASH]);
+        }
     }
     return $pdo;
 }
@@ -93,6 +107,29 @@ function getDB() {
 // -----------------------------------------------------------------------------
 // 3. Auth Helpers
 // -----------------------------------------------------------------------------
+function verifyAdminCredentials($username, $password) {
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT password_hash FROM admin_users WHERE username = :u LIMIT 1");
+        $stmt->execute([':u' => $username]);
+        $row = $stmt->fetch();
+        if ($row && !empty($row['password_hash'])) {
+            return password_verify($password, $row['password_hash']);
+        }
+    } catch (Exception $e) {
+        // Fallback to static config
+    }
+    return ($username === ADMIN_USERNAME && password_verify($password, ADMIN_PASSWORD_HASH));
+}
+
+function updateAdminPassword($newPassword) {
+    $db = getDB();
+    $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+    $stmt = $db->prepare("UPDATE admin_users SET password_hash = :hash, updated_at = datetime('now') WHERE username = 'admin'");
+    $stmt->execute([':hash' => $newHash]);
+    return true;
+}
+
 function isAdminLoggedIn() {
     return !empty($_SESSION['ajftfp_admin_logged_in']);
 }
